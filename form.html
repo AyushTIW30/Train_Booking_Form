@@ -1,0 +1,232 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Train Booking Form with OTP</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #a8e063, #56ab2f);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .form-container {
+      background-color: #fff;
+      padding: 30px 40px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #2f6627;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #4caf50;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      width: 100%;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .step {
+      display: none;
+    }
+
+    .step.active {
+      display: block;
+    }
+
+    .otp-display {
+      font-size: 18px;
+      color: #2f6627;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="form-container">
+  <h2>Train Booking</h2>
+
+  <!-- Step 1: Train Selection -->
+  <div class="step active" id="step1">
+    <div class="form-group">
+      <label for="train">Select Train</label>
+      <select id="train" required>
+        <option value="" disabled selected>Select a train</option>
+        <option value="Shatabdi Express">Shatabdi Express</option>
+        <option value="Rajdhani Express">Rajdhani Express</option>
+        <option value="Duronto Express">Duronto Express</option>
+        <option value="Garib Rath">Garib Rath</option>
+        <option value="Local Train">Local Train</option>
+      </select>
+    </div>
+    <button onclick="nextStep(2)">Next</button>
+  </div>
+
+  <!-- Step 2: Passenger Details -->
+  <div class="step" id="step2">
+    <div class="form-group">
+      <label for="name">Passenger Name</label>
+      <input type="text" id="name" required>
+    </div>
+    <div class="form-group">
+      <label for="age">Age</label>
+      <input type="number" id="age" min="1" required>
+    </div>
+    <div class="form-group">
+      <label for="gender">Gender</label>
+      <select id="gender" required>
+        <option value="" disabled selected>Select Gender</option>
+        <option>Male</option>
+        <option>Female</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <button onclick="nextStep(3)">Next</button>
+  </div>
+
+  <!-- Step 3: Travel Details -->
+  <div class="step" id="step3">
+    <div class="form-group">
+      <label for="from">From Station</label>
+      <input type="text" id="from" required>
+    </div>
+    <div class="form-group">
+      <label for="to">To Station</label>
+      <input type="text" id="to" required>
+    </div>
+    <div class="form-group">
+      <label for="date">Travel Date</label>
+      <input type="date" id="date" required>
+    </div>
+    <button onclick="nextStep(4)">Next</button>
+  </div>
+
+  <!-- Step 4: Seat & Bogie -->
+  <div class="step" id="step4">
+    <div class="form-group">
+      <label for="bogie">Coach/Bogie Number</label>
+      <input type="text" id="bogie" placeholder="e.g., B2 or S4">
+    </div>
+    <div class="form-group">
+      <label for="seat">Seat Number</label>
+      <input type="number" id="seat" placeholder="e.g., 12" min="1">
+    </div>
+    <button onclick="nextStep(5)">Next</button>
+  </div>
+
+  <!-- Step 5: OTP Confirmation -->
+  <div class="step" id="step5">
+    <div class="otp-display" id="otpDisplay"></div>
+    <div class="form-group">
+      <label for="otpInput">Enter OTP</label>
+      <input type="number" id="otpInput" placeholder="Enter OTP">
+    </div>
+    <button onclick="validateOTP()">Confirm Booking</button>
+  </div>
+
+  <!-- Step 6: Final Confirmation -->
+  <div class="step" id="step6">
+    <h2 style="text-align:center; color: green;">✅ Booking Confirmed!</h2>
+    <p style="text-align:center;">Your seat is reserved. Have a safe journey!</p>
+  </div>
+
+</div>
+
+<script>
+  let generatedOTP = "";
+
+  function nextStep(step) {
+    // Basic validation per step
+    if (step === 2 && !document.getElementById("train").value) {
+      alert("Please select a train.");
+      return;
+    }
+
+    if (step === 3) {
+      if (!document.getElementById("name").value ||
+          !document.getElementById("age").value ||
+          !document.getElementById("gender").value) {
+        alert("Please fill passenger details.");
+        return;
+      }
+    }
+
+    if (step === 4) {
+      if (!document.getElementById("from").value ||
+          !document.getElementById("to").value ||
+          !document.getElementById("date").value) {
+        alert("Please enter travel details.");
+        return;
+      }
+    }
+
+    if (step === 5) {
+      if (!document.getElementById("bogie").value ||
+          !document.getElementById("seat").value) {
+        alert("Please enter seat and coach number.");
+        return;
+      }
+      // Generate OTP
+      generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+      document.getElementById("otpDisplay").innerText = "Your OTP: " + generatedOTP;
+    }
+
+    // Show next step
+    document.querySelectorAll('.step').forEach(div => div.classList.remove('active'));
+    document.getElementById("step" + step).classList.add("active");
+  }
+
+  function validateOTP() {
+    const entered = document.getElementById("otpInput").value;
+    if (entered === generatedOTP) {
+      nextStep(6);
+    } else {
+      alert("Incorrect OTP. Please try again.");
+    }
+  }
+</script>
+
+</body>
+</html>
